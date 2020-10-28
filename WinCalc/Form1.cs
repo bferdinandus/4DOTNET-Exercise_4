@@ -97,7 +97,7 @@ namespace WinCalc
         private decimal Add(decimal a, decimal b)
         {
             Task.Delay(_timeRemaining * 1000).Wait(); // long blocking action
-            throw new Exception("Oepsje, gaat mis");
+            //throw new Exception("Oepsje, gaat mis");
 
             return a + b;
         }
