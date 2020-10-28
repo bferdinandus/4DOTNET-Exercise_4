@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -28,29 +29,20 @@ namespace WinCalc
             timeRemainingLabel.Text = _timeRemaining.ToString();
             timer1.Start();
 
+            var ctx = SynchronizationContext.Current;
             Func<decimal, decimal, decimal> add = Add;
 
-            IAsyncResult ar = add.BeginInvoke(a, b, ar2 => UpdateAnswer(add.EndInvoke(ar2)), null);
+            IAsyncResult ar = add.BeginInvoke(a, b, ar2 => ctx.Post(UpdateAnswer, add.EndInvoke(ar2)), null);
         }
 
         private void UpdateAnswer(object result)
         {
-            if (answerLabel.InvokeRequired)
-            {
-                answerLabel.Invoke((MethodInvoker)delegate 
-                {
-                    UpdateAnswer(result); // runs thread safe
-                });
-            }
-            else
-            {
-                answerLabel.Text = result.ToString();
-            }
+            answerLabel.Text = result.ToString();
         }
 
         private decimal Add(decimal a, decimal b)
         {
-            Task.Delay(_timeRemaining*1000).Wait();
+            Task.Delay(_timeRemaining * 1000).Wait();
 
             return a + b;
         }
