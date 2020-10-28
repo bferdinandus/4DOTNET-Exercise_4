@@ -45,9 +45,14 @@ namespace WinCalc
 
             try
             {
-                /*decimal res = await AddAsync(a, b);
-                UpdateAnswer(res);*/
-                UpdateAnswer(await AddAsync(a, b));
+                Task<decimal> res1 = AddAsync(a, b);
+                Task<decimal> res2 = AddAsync(a, b);
+
+                var x = await Task.WhenAll(res1, res2) ;
+                
+                UpdateAnswer(res1);
+
+                //UpdateAnswer(await AddAsync(a, b));
             }
             catch (Exception e)
             {
